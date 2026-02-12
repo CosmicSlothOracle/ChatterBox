@@ -146,6 +146,11 @@ export const renderApp = (root) => {
 
   const bootstrap = async () => {
     const cached = loadCache();
+    const cachedGroups = cached ? buildGroups(cached.matches) : [];
+    const hasUsableCache = cachedGroups.length > 0;
+
+    if (hasUsableCache) {
+      state.groups = cachedGroups;
     if (cached) {
       state.groups = buildGroups(cached.matches);
       state.selected = state.groups.map((g) => g.spieltag);
@@ -159,6 +164,24 @@ export const renderApp = (root) => {
 
     try {
       const fresh = await fetchBundesligaResults();
+      const freshGroups = buildGroups(fresh.matches);
+
+      if (freshGroups.length) {
+        saveCache(fresh);
+        state.groups = freshGroups;
+        if (!state.selected.length) {
+          state.selected = state.groups.map((g) => g.spieltag);
+        }
+        state.lastUpdated = fresh.updatedAt;
+        state.error = '';
+      } else if (!hasUsableCache) {
+        state.groups = buildGroups(fallbackPayload.matches);
+        state.selected = state.groups.map((g) => g.spieltag);
+        state.lastUpdated = fallbackPayload.updatedAt;
+        state.error = 'Live-Daten sind aktuell leer. Es werden lokale Beispieldaten angezeigt.';
+      }
+    } catch {
+      if (!hasUsableCache) {
       saveCache(fresh);
       state.groups = buildGroups(fresh.matches);
       if (!state.selected.length) {
