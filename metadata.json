@@ -1,0 +1,6 @@
+{
+  "name": "Bundesliga Ergebnisse Dashboard",
+  "description": "Professionelles Bundesliga-Dashboard mit Spieltag-Selektion, Caching und Exportfunktionen.",
+  "locale": "de-DE",
+  "cacheKey": "bundesliga_results_cache"
+}
