@@ -4,6 +4,7 @@ const API_URL = 'https://api.openligadb.de/getmatchdata/bl1/2024';
 const toMatch = (item) => {
   const results = item.MatchResults ?? [];
   const finalResult = results.find((result) => result.ResultTypeID === 2) ?? results[results.length - 1];
+  const finalResult = item.MatchResults?.find((result) => result.ResultTypeID === 2);
   const spieltag = item.Group?.GroupOrderID;
   if (!finalResult || !spieltag) return null;
 

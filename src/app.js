@@ -151,6 +151,8 @@ export const renderApp = (root) => {
 
     if (hasUsableCache) {
       state.groups = cachedGroups;
+    if (cached) {
+      state.groups = buildGroups(cached.matches);
       state.selected = state.groups.map((g) => g.spieltag);
       state.lastUpdated = cached.updatedAt;
       state.error = '';
@@ -180,6 +182,15 @@ export const renderApp = (root) => {
       }
     } catch {
       if (!hasUsableCache) {
+      saveCache(fresh);
+      state.groups = buildGroups(fresh.matches);
+      if (!state.selected.length) {
+        state.selected = state.groups.map((g) => g.spieltag);
+      }
+      state.lastUpdated = fresh.updatedAt;
+      state.error = '';
+    } catch {
+      if (!cached) {
         state.groups = buildGroups(fallbackPayload.matches);
         state.selected = state.groups.map((g) => g.spieltag);
         state.lastUpdated = fallbackPayload.updatedAt;
